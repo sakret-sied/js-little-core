@@ -1,6 +1,6 @@
 import Module from './module.js';
 
-export default class Core {
+export default class LittleCore {
   constructor() {
     this.container = document.querySelector('#app');
     this.selectorKey = this.constructor.name.replace('App', 'selector');
