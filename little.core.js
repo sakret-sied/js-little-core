@@ -10,6 +10,8 @@ export default class LittleCore {
 
     this.contentId = this.selectorId.replace('selector', 'content');
     this.content = this.#createContentOnDocument();
+
+    this.#addStyles();
   }
 
   setModules(modules) {
@@ -28,6 +30,12 @@ export default class LittleCore {
     this.#addEventListenerToSelector();
   }
 
+  #addStyles() {
+    this.container.style.display = 'flex';
+    this.container.style.flexDirection = 'column';
+    this.container.style.gap = '1rem';
+  }
+
   #createContentOnDocument() {
     const content = document.createElement('div');
     content.id = this.contentId;
@@ -36,9 +44,11 @@ export default class LittleCore {
   }
 
   #createSelectorOnDocument() {
+    const div = document.createElement('div');
+    div.id = this.selectorId;
+    this.container.insertAdjacentElement('afterbegin', div);
     const selector = document.createElement('select');
-    selector.id = this.selectorId;
-    this.container.insertAdjacentElement('afterbegin', selector);
+    div.insertAdjacentElement('afterbegin', selector);
     return selector;
   }
 
