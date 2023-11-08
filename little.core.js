@@ -58,7 +58,7 @@ export default class LittleCore {
       console.clear();
       this.content.innerHTML = '';
       this.#setDefaultSelector(e.target.value);
-      this.modules.get(e.target.value).execute();
+      this.modules.get(e.target.value).prepare().execute();
     });
   }
 

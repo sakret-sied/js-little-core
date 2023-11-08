@@ -4,4 +4,8 @@ export default class Module {
   }
 
   execute() {}
+
+  prepare() {
+    return this;
+  }
 }
