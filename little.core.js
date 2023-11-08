@@ -50,7 +50,7 @@ export default class LittleCore {
       option.selected = index === defaultSelector ? 'selected' : '';
       this.selector.insertAdjacentElement('beforeend', option);
     });
-    this.modules.get(defaultSelector).execute();
+    this.modules.get(defaultSelector).prepare().execute();
   }
 
   #addEventListenerToSelector() {
