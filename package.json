@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/sakret-sied/js-little-core/issues"
   },
-  "homepage": "https://github.com/sakret-sied/js-little-core#readme"
+  "homepage": "https://github.com/sakret-sied/js-little-core#readme",
+  "dependencies": {
+    "prettier": "^3.0.3"
+  }
 }
