@@ -1,22 +1,36 @@
 import Module from './module.js';
 
 export default class LittleCore {
-  constructor() {
-    this.container = document.querySelector('#app');
+  #container;
+  #selectKey;
+  #selectId;
+  #select;
+  #contentId;
+  #content;
 
-    this.selectorKey = this.constructor.name.replace('App', 'selector');
-    this.selectorId = this.selectorKey.replace(/([A-Z])/g, '-$1').toLowerCase();
-    this.selector = this.#createSelectorOnDocument();
+  constructor(appSelector = '#app') {
+    this.#container = document.querySelector(appSelector);
 
-    this.contentId = this.selectorId.replace('selector', 'content');
-    this.content = this.#createContentOnDocument();
+    this.#selectKey = this.constructor.name;
+    this.#selectId = this.#selectKey
+      .replace('App', 'select')
+      .replace(/([A-Z])/g, '-$1')
+      .toLowerCase();
+    this.#select = this.#createSelectOnDocument();
+
+    this.#contentId = this.#selectId.replace('select', 'content');
+    this.#content = this.#createContentOnDocument();
 
     this.#addStyles();
   }
 
+  get content() {
+    return this.#content;
+  }
+
   setModules(modules) {
     const checkedModules = modules
-      .map((module) => [module.name, new module(this.content)])
+      .map((module) => [module.name, new module(this.#content)])
       .filter((module) => module[1] instanceof Module);
     this.modules = new Map(checkedModules);
   }
@@ -26,61 +40,61 @@ export default class LittleCore {
       return;
     }
 
-    this.#addOptionsToSelector();
-    this.#addEventListenerToSelector();
+    this.#addOptionsToSelect();
+    this.#addEventListenerToSelect();
   }
 
   #addStyles() {
-    this.container.style.display = 'flex';
-    this.container.style.flexDirection = 'column';
-    this.container.style.gap = '1rem';
+    this.#container.style.display = 'flex';
+    this.#container.style.flexDirection = 'column';
+    this.#container.style.gap = '1rem';
   }
 
   #createContentOnDocument() {
     const content = document.createElement('div');
-    content.id = this.contentId;
-    this.container.insertAdjacentElement('beforeend', content);
+    content.id = this.#contentId;
+    this.#container.insertAdjacentElement('beforeend', content);
     return content;
   }
 
-  #createSelectorOnDocument() {
+  #createSelectOnDocument() {
     const div = document.createElement('div');
-    div.id = this.selectorId;
-    this.container.insertAdjacentElement('afterbegin', div);
-    const selector = document.createElement('select');
-    div.insertAdjacentElement('afterbegin', selector);
-    return selector;
+    div.id = this.#selectId;
+    this.#container.insertAdjacentElement('afterbegin', div);
+    const select = document.createElement('select');
+    div.insertAdjacentElement('afterbegin', select);
+    return select;
   }
 
-  #addOptionsToSelector() {
-    const defaultSelector = this.#getDefaultSelector();
+  #addOptionsToSelect() {
+    const defaultSelectValue = this.#getDefaultSelectValue();
     this.modules.forEach((_, index) => {
       const option = document.createElement('option');
       option.id = option.innerText = index;
-      option.selected = index === defaultSelector ? 'selected' : '';
-      this.selector.insertAdjacentElement('beforeend', option);
+      option.selected = index === defaultSelectValue ? 'selected' : '';
+      this.#select.insertAdjacentElement('beforeend', option);
     });
-    this.modules.get(defaultSelector).prepare().execute();
+    this.modules.get(defaultSelectValue).prepare().execute();
   }
 
-  #addEventListenerToSelector() {
-    this.selector.addEventListener('change', (e) => {
+  #addEventListenerToSelect() {
+    this.#select.addEventListener('change', (e) => {
       console.clear();
-      this.content.innerHTML = '';
-      this.#setDefaultSelector(e.target.value);
+      this.#content.innerHTML = '';
+      this.#setDefaultSelectValue(e.target.value);
       this.modules.get(e.target.value).prepare().execute();
     });
   }
 
-  #setDefaultSelector(selectorValue) {
-    localStorage.setItem(this.selectorKey, selectorValue);
+  #setDefaultSelectValue(selectValue) {
+    localStorage.setItem(this.#selectKey, selectValue);
   }
 
-  #getDefaultSelector() {
-    const selectorStorage = localStorage.getItem(this.selectorKey);
+  #getDefaultSelectValue() {
+    const storageModule = localStorage.getItem(this.#selectKey);
     const firstModule = this.modules.keys().next().value;
-    return selectorStorage && this.modules.get(selectorStorage)
-      ? selectorStorage
+    return storageModule && this.modules.get(storageModule)
+      ? storageModule
       : firstModule;
   }
 }
