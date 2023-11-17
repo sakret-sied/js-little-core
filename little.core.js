@@ -53,16 +53,17 @@ export default class LittleCore {
   #createContentOnDocument() {
     const content = document.createElement('div');
     content.id = this.#contentId;
-    this.#container.insertAdjacentElement('beforeend', content);
+    this.#container.appendChild(content);
     return content;
   }
 
   #createSelectOnDocument() {
     const div = document.createElement('div');
     div.id = this.#selectId;
-    this.#container.insertAdjacentElement('afterbegin', div);
+    this.#container.appendChild(div);
+
     const select = document.createElement('select');
-    div.insertAdjacentElement('afterbegin', select);
+    div.appendChild(select);
     return select;
   }
 
@@ -72,7 +73,7 @@ export default class LittleCore {
       const option = document.createElement('option');
       option.id = option.innerText = index;
       option.selected = index === defaultSelectValue ? 'selected' : '';
-      this.#select.insertAdjacentElement('beforeend', option);
+      this.#select.appendChild(option);
     });
     this.modules.get(defaultSelectValue).prepare().execute();
   }
