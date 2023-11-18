@@ -2,11 +2,11 @@ import Module from './module.js';
 
 export default class LittleCore {
   #container;
-  #selectKey;
-  #selectId;
-  #select;
-  #contentId;
   #content;
+  #contentId;
+  #select;
+  #selectId;
+  #selectKey;
 
   constructor(appSelector = '#app') {
     this.#container = document.querySelector(appSelector);
