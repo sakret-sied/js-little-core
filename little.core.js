@@ -71,7 +71,7 @@ export default class LittleCore {
     const defaultSelectValue = this.#getDefaultSelectValue();
     this.modules.forEach((_, index) => {
       const option = document.createElement('option');
-      option.id = option.innerText = index;
+      option.id = option.textContent = index;
       option.selected = index === defaultSelectValue ? 'selected' : '';
       this.#select.append(option);
     });
