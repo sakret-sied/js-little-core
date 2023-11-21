@@ -1,36 +1,36 @@
 import Module from './module.js';
 
 export default class LittleCore {
-  #container;
-  #content;
+  #appContainer;
+  #contentContainer;
   #contentId;
-  #select;
+  #selectContainer;
   #selectId;
   #selectKey;
 
   constructor(appSelector = '#app') {
-    this.#container = document.querySelector(appSelector);
+    this.#appContainer = document.querySelector(appSelector);
 
     this.#selectKey = this.constructor.name;
     this.#selectId = this.#selectKey
       .replace('App', 'select')
       .replace(/([A-Z])/g, '-$1')
       .toLowerCase();
-    this.#select = this.#createSelectOnDocument();
+    this.#selectContainer = this.#createSelectContainer();
 
     this.#contentId = this.#selectId.replace('select', 'content');
-    this.#content = this.#createContentOnDocument();
+    this.#contentContainer = this.#createContentContainer();
 
     this.#addStyles();
   }
 
   get content() {
-    return this.#content;
+    return this.#contentContainer;
   }
 
   setModules(modules) {
     const checkedModules = modules
-      .map((module) => [module.name, new module(this.#content)])
+      .map((module) => [module.name, new module(this.#contentContainer)])
       .filter((module) => module[1] instanceof Module);
     this.modules = new Map(checkedModules);
   }
@@ -40,48 +40,52 @@ export default class LittleCore {
       return;
     }
 
-    this.#addOptionsToSelect();
-    this.#addEventListenerToSelect();
+    const select = this.#createSelect();
+    this.#addOptionsToSelect(select);
+    this.#addEventListenerToSelect(select);
   }
 
   #addStyles() {
-    this.#container.style.display = 'flex';
-    this.#container.style.flexDirection = 'column';
-    this.#container.style.gap = '1rem';
+    this.#appContainer.style.display = 'flex';
+    this.#appContainer.style.flexDirection = 'column';
+    this.#appContainer.style.gap = '1rem';
   }
 
-  #createContentOnDocument() {
+  #createContentContainer() {
     const content = document.createElement('div');
     content.id = this.#contentId;
-    this.#container.append(content);
+    this.#appContainer.append(content);
     return content;
   }
 
-  #createSelectOnDocument() {
-    const div = document.createElement('div');
-    div.id = this.#selectId;
-    this.#container.append(div);
-
-    const select = document.createElement('select');
-    div.append(select);
+  #createSelectContainer() {
+    const select = document.createElement('div');
+    select.id = this.#selectId;
+    this.#appContainer.append(select);
     return select;
   }
 
-  #addOptionsToSelect() {
+  #createSelect() {
+    const selectList = document.createElement('select');
+    this.#selectContainer.append(selectList);
+    return selectList;
+  }
+
+  #addOptionsToSelect(select) {
     const defaultSelectValue = this.#getDefaultSelectValue();
     this.modules.forEach((_, index) => {
       const option = document.createElement('option');
       option.id = option.textContent = index;
       option.selected = index === defaultSelectValue ? 'selected' : '';
-      this.#select.append(option);
+      select.append(option);
     });
     this.modules.get(defaultSelectValue).prepare().execute();
   }
 
-  #addEventListenerToSelect() {
-    this.#select.addEventListener('change', (e) => {
+  #addEventListenerToSelect(select) {
+    select.addEventListener('change', (e) => {
       console.clear();
-      this.#content.innerHTML = '';
+      this.#contentContainer.innerHTML = '';
       this.#setDefaultSelectValue(e.target.value);
       this.modules.get(e.target.value).prepare().execute();
     });
